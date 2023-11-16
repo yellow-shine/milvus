@@ -358,7 +358,9 @@ pull_request_rules:
 
   - name: Add 'do-not-merge/invalid-pr-format' label for invalid PR titles
     conditions:
-      - '-title~=^(feat:|enhance:|fix:)'
+      - or:
+        - '-title~=^(feat:|enhance:|fix:)'
+        - body=^$
     actions:
       label:
         add:
@@ -367,26 +369,38 @@ pull_request_rules:
         message: |
           @{{author}} 
 
-          **Invalid PR Title Format Detected**. 
-          
-          Your PR title does not match the required format. Please update the title to follow this structure:
+          **🚨 Invalid PR Title Format Detected 🚨**
 
-          [**Type**]: [**Description of the PR**]
+          Your PR submission does not adhere to our required standards. To ensure clarity and consistency, please meet the following criteria:
 
-          Where '**Type**' can be one of the following:
+          1. **Title Format:** The PR title must begin with one of these prefixes:
+            - `feat:` for introducing a new feature.
+            - `enhance:` for improvements to existing functionality.
+            - `fix:` for bug fixes.
 
-          **feat**: for a new feature
-          **enhance**: for an improvement to existing code
-          **fix**: for a bug fix patch
+          2. **Description Requirement:** The PR must include a non-empty description, detailing the changes and their impact.
 
-          Example: **feat: Add search functionality to the user interface**
+          📝 **Required Title Structure:**
 
-          Please revise your PR title accordingly.
+          ```
+          [Type]: [Description of the PR]
+          ```
 
-  - name: Remove 'do-not-merge/invalid-pr-format' label when PR titles is valid
-    conditions:
-      - 'title~=^(feat:|enhance:|fix:)'
-    actions:
-      label:
-        remove:
-          - do-not-merge/invalid-pr-format
+          Where `Type` is one of `feat`, `enhance`, or `fix`. 
+
+          🌟 **Example:**
+          ```
+          feat: Enhance search functionality within the user interface
+          ```
+
+          Please review and update your PR to comply with these guidelines.
+
+    - name: Remove 'do-not-merge/invalid-pr-format' label for valid PRs
+      conditions:
+        - 'title~=^(feat:|enhance:|fix:)''
+        - '-body=^$'
+        - 'label=do-not-merge/invalid-pr-format'
+      actions:
+        label:
+          remove:
+            - do-not-merge/invalid-pr-format
