@@ -363,6 +363,21 @@ pull_request_rules:
       label:
         add:
           - do-not-merge/invalid-pr-format
+      comment:
+        message: |
+          @{{author}} Invalid PR Title Format Detected. Your PR title does not match the required format. Please update the title to follow this structure:
+
+          [Type]: [Description of the PR]
+
+          Where 'Type' can be one of the following:
+
+          feat: for a new feature
+          enhance: for an improvement to existing code
+          fix: for a bug fix patch
+
+          Example: feat: Add search functionality to the user interface
+
+          Please revise your PR title accordingly.
 
   - name: Remove 'do-not-merge/invalid-pr-format' label when PR titles is valid
     conditions:
