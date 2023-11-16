@@ -363,3 +363,11 @@ pull_request_rules:
       label:
         add:
           - do-not-merge/invalid-pr-format
+
+  - name: Remove 'do-not-merge/invalid-pr-format' label when PR titles is valid
+    conditions:
+      - 'title~=^(feat:|enhance:|fix:)'
+    actions:
+      label:
+        remove:
+          - do-not-merge/invalid-pr-format
