@@ -369,7 +369,7 @@ pull_request_rules:
         message: |
           @{{author}} 
 
-          **🚨 Invalid PR Title Format Detected 🚨**
+          **Invalid PR Title Format Detected**
 
           Your PR submission does not adhere to our required standards. To ensure clarity and consistency, please meet the following criteria:
 
@@ -380,7 +380,7 @@ pull_request_rules:
 
           2. **Description Requirement:** The PR must include a non-empty description, detailing the changes and their impact.
 
-          📝 **Required Title Structure:**
+          **Required Title Structure:**
 
           ```
           [Type]: [Description of the PR]
@@ -388,7 +388,7 @@ pull_request_rules:
 
           Where `Type` is one of `feat`, `enhance`, or `fix`. 
 
-          🌟 **Example:**
+          **Example:**
           ```
           feat: Enhance search functionality within the user interface
           ```
