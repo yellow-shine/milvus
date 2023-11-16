@@ -356,12 +356,10 @@ pull_request_rules:
         message: |
           @{{author}} ut workflow job failed, comment `rerun ut` can trigger the job again.
 
-
-  - name: 'bot would add the kind/improvement label when it sees type: in PR title'
+  - name: Add 'do-not-merge/invalid-pr-format' label for invalid PR titles
     conditions:
-      - 'title~=type:'
+      - '-title~=^(feat:|enhance:|fix:)'
     actions:
       label:
         add:
-          - 'kind/improvement'
-
+          - do-not-merge/invalid-pr-format
