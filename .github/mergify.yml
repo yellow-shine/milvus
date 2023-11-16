@@ -365,17 +365,21 @@ pull_request_rules:
           - do-not-merge/invalid-pr-format
       comment:
         message: |
-          @{{author}} Invalid PR Title Format Detected. Your PR title does not match the required format. Please update the title to follow this structure:
+          @{{author}} 
 
-          [Type]: [Description of the PR]
+          **Invalid PR Title Format Detected**. 
+          
+          Your PR title does not match the required format. Please update the title to follow this structure:
 
-          Where 'Type' can be one of the following:
+          [**Type**]: [**Description of the PR**]
 
-          feat: for a new feature
-          enhance: for an improvement to existing code
-          fix: for a bug fix patch
+          Where '**Type**' can be one of the following:
 
-          Example: feat: Add search functionality to the user interface
+          **feat**: for a new feature
+          **enhance**: for an improvement to existing code
+          **fix**: for a bug fix patch
+
+          Example: **feat: Add search functionality to the user interface**
 
           Please revise your PR title accordingly.
 
