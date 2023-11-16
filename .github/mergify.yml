@@ -395,12 +395,12 @@ pull_request_rules:
 
           Please review and update your PR to comply with these guidelines.
 
-    - name: Remove 'do-not-merge/invalid-pr-format' label for valid PRs
-      conditions:
-        - 'title~=^(feat:|enhance:|fix:)''
-        - '-body=^$'
-        - 'label=do-not-merge/invalid-pr-format'
-      actions:
-        label:
-          remove:
-            - do-not-merge/invalid-pr-format
+  - name: Remove 'do-not-merge/invalid-pr-format' label for valid PRs
+    conditions:
+      - 'title~=^(feat:|enhance:|fix:)''
+      - '-body=^$'
+      - 'label=do-not-merge/invalid-pr-format'
+    actions:
+      label:
+        remove:
+          - do-not-merge/invalid-pr-format
