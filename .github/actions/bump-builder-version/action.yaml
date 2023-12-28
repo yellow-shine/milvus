@@ -8,6 +8,9 @@ inputs:
     description: 'the type of builder image, cpu or gpu'
     required: true
     default: 'cpu'
+  token:
+    description: 'github token to create pull request'
+    required: true
 runs:
   using: "composite"
   steps:
@@ -34,7 +37,7 @@ runs:
         id: cpr
         uses: peter-evans/create-pull-request@v3
         with:
-          token: ${{ secrets.ALL_CONTRIBUTORS_TOKEN }}
+          token: ${{ inputs.token }}
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           signoff: false
           branch: update_${{ inputs.type }}_builder_${{ github.sha }}
