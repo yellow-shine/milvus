@@ -45,6 +45,7 @@ runs:
             See changes: https://github.com/milvus-io/milvus/commit/${{ github.sha }}
             Signed-off-by: ${{ github.actor }} ${{ github.actor }}@users.noreply.github.com
       - name: Check outputs
+        shell: bash
         run: |
           echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
           echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
