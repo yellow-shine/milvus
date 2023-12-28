@@ -21,3 +21,4 @@ jobs:
         with:
           tag: "hello-gpu-world"
           type: gpu
+          token: ${{ secrets.ALL_CONTRIBUTORS_TOKEN }}
