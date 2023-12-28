@@ -1,0 +1,19 @@
+
+name: release
+
+on:
+  workflow_dispatch:
+
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: bump builder version
+        uses: ./.github/actions/bump-builder-version
+        with:
+          tag: "hello-gpu-world"
+          type: gpu
+          token: ${{ secrets.ALL_CONTRIBUTORS_TOKEN }}
