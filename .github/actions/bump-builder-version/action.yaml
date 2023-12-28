@@ -36,6 +36,7 @@ runs:
       - name: Create Pull Request
         id: cpr
         uses: peter-evans/create-pull-request@v3
+        continue-on-error: true
         with:
           token: ${{ inputs.token }}
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
