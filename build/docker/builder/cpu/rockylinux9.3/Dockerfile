@@ -13,18 +13,11 @@ FROM rockylinux/rockylinux:9.3
 
 ARG TARGETARCH
 
-
-RUN dnf install -y  git wget
-RUN dnf install -y epel-release
-RUN dnf groupinstall -y "Development Tools"
-RUN dnf install -y wget which \
-  git make automake python3-devel  python3-pip \
-  gcc gcc-c++ gcc-gfortran \
-  clang llvm-devel \
-  libaio libuuid-devel zip unzip \
-  ccache lcov libtool m4 autoconf automake
-RUN rm -rf /var/cache/yum/*
-
+RUN dnf install -y wget g++ gcc gdb libatomic git make zip unzip tar which \
+    autoconf automake golang python3 python3-pip perl-FindBin \
+    pkg-config libuuid-devel libaio perl-IPC-Cmd libasan && \
+    dnf --enablerepo=crb install -y libstdc++-static ninja-build texinfo && \
+    rm -rf /var/cache/yum/* 
 
 RUN pip3 install conan==1.61.0
 RUN dnf install -y perl
