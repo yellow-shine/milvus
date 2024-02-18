@@ -27,32 +27,15 @@ RUN rm -rf /var/cache/yum/*
 
 
 RUN pip3 install conan==1.61.0
+RUN dnf install -y perl
 
 RUN echo "target arch $TARGETARCH"
-RUN wget -qO- "https://cmake.org/files/v3.27/cmake-3.27.5-linux-`uname -m`.tar.gz" | tar --strip-components=1 -xz -C /usr/local
+RUN wget -qO- "https://cmake.org/files/v3.28/cmake-3.28.1-linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C /usr/local
 
-# https://github.com/microsoft/vcpkg/pull/35084
-RUN mkdir /opt/vcpkg &&  \
-    wget -qO- vcpkg.tar.gz https://github.com/microsoft/vcpkg/archive/refs/tags/2023.11.20.tar.gz | tar --strip-components=1 -xz -C /opt/vcpkg && \
-    rm -rf vcpkg.tar.gz
-
-ENV VCPKG_FORCE_SYSTEM_BINARIES 1
-
-RUN /opt/vcpkg/bootstrap-vcpkg.sh -disableMetrics && ln -s /opt/vcpkg/vcpkg /usr/local/bin/vcpkg && vcpkg version
-
-RUN vcpkg install azure-identity-cpp azure-storage-blobs-cpp gtest --only-downloads
-
-RUN mkdir /tmp/ccache && cd /tmp/ccache &&\
-    wget https://dl.fedoraproject.org/pub/epel/9/Everything/`uname -m`/Packages/h/hiredis-1.0.2-1.el9.`uname -m`.rpm &&\
-    wget https://dl.fedoraproject.org/pub/epel/9/Everything/`uname -m`/Packages/c/ccache-4.5.1-2.el9.`uname -m`.rpm &&\
-    rpm -i hiredis-1.0.2-1.el9.`uname -m`.rpm ccache-4.5.1-2.el9.`uname -m`.rpm &&\
-    rm -rf /tmp/ccache
-
-
-# refer: https://code.visualstudio.com/docs/remote/containers-advanced#_avoiding-extension-reinstalls-on-container-rebuild
-RUN mkdir -p /home/milvus/.vscode-server/extensions \
-        /home/milvus/.vscode-server-insiders/extensions \
-    && chmod -R 777 /home/milvus
+RUN wget https://go.dev/dl/go1.21.6.linux-amd64.tar.gz
+RUN tar -xvf go1.21.6.linux-amd64.tar.gz -C /usr/local
+RUN echo "export PATH=/usr/local/bin:$PATH:/usr/local/go/bin" >> ~/.bashrc
+RUN source ~/.bashrc    
 
 COPY --chown=0:0 build/docker/builder/entrypoint.sh /
 
