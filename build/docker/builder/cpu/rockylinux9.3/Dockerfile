@@ -17,7 +17,7 @@ ARG TARGETARCH
 RUN dnf install -y  git wget
 RUN dnf install -y epel-release
 RUN dnf groupinstall -y "Development Tools"
-RUN dnf install -y wget curl which \
+RUN dnf install -y wget which \
   git make automake python3-devel  python3-pip \
   gcc gcc-c++ gcc-gfortran \
   clang llvm-devel \
