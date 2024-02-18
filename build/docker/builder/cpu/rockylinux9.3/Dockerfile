@@ -20,7 +20,6 @@ RUN dnf install -y wget g++ gcc gdb libatomic git make zip unzip tar which \
     rm -rf /var/cache/yum/* 
 
 RUN pip3 install conan==1.61.0
-RUN dnf install -y perl
 
 RUN echo "target arch $TARGETARCH"
 RUN wget -qO- "https://cmake.org/files/v3.27/cmake-3.27.5-linux-`uname -m`.tar.gz" | tar --strip-components=1 -xz -C /usr/local
@@ -42,6 +41,7 @@ RUN mkdir /tmp/ccache && cd /tmp/ccache &&\
     wget https://dl.fedoraproject.org/pub/epel/9/Everything/`uname -m`/Packages/c/ccache-4.5.1-2.el9.`uname -m`.rpm &&\
     rpm -i hiredis-1.0.2-1.el9.`uname -m`.rpm ccache-4.5.1-2.el9.`uname -m`.rpm &&\
     rm -rf /tmp/ccache
+
 # refer: https://code.visualstudio.com/docs/remote/containers-advanced#_avoiding-extension-reinstalls-on-container-rebuild
 RUN mkdir -p /home/milvus/.vscode-server/extensions \
         /home/milvus/.vscode-server-insiders/extensions \
