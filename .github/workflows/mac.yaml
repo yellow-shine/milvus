@@ -34,6 +34,8 @@ jobs:
     runs-on: macos-12
     timeout-minutes: 300
     steps:
+      - run:  df -h
+      - run: ls -lrta /
       - name: Checkout
         uses: actions/checkout@v2
       - name: 'Generate CCache Hash'
@@ -92,3 +94,5 @@ jobs:
         with:
           name: cmake-log
           path: cmake_build/CMakeFiles/*.log
+      - run:  df -h
+      - run: ls -lrta /
