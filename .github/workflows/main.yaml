@@ -70,24 +70,24 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - name: 'Check Changed files'
-        id: changed-files-cpp
-        uses: tj-actions/changed-files@v41
-        with:
-          since_last_remote_commit: 'true'
-          files: |
-            **/*.cpp
-            **/*.cc
-            **/*.c
-            **/*.h
-            **/*.hpp
-            **/*.CMakeLists.txt
-            **/conanfile.*
-      - name: 'Setup Use USE_ASAN'
-        if: steps.changed-files-cpp.outputs.any_changed == 'true'
-        run: |
-          echo "useasan=ON" >> $GITHUB_ENV
-          echo "Setup USE_ASAN to true since cpp file(s) changed"
+      # - name: 'Check Changed files'
+      #   id: changed-files-cpp
+      #   uses: tj-actions/changed-files@v41
+      #   with:
+      #     since_last_remote_commit: 'true'
+      #     files: |
+      #       **/*.cpp
+      #       **/*.cc
+      #       **/*.c
+      #       **/*.h
+      #       **/*.hpp
+      #       **/*.CMakeLists.txt
+      #       **/conanfile.*
+      # - name: 'Setup Use USE_ASAN'
+      #   if: steps.changed-files-cpp.outputs.any_changed == 'true'
+      #   run: |
+      #     echo "useasan=ON" >> $GITHUB_ENV
+      #     echo "Setup USE_ASAN to true since cpp file(s) changed"
       - name: Download Caches
         uses: ./.github/actions/cache
         with:
@@ -95,7 +95,7 @@ jobs:
           kind: 'cpp'
       - name: Build
         run: |
-          ./build/builder.sh /bin/bash -c "make USE_ASAN=${{env.useasan}} build-cpp-with-coverage"
+          ./build/builder.sh /bin/bash -c "make USE_ASAN=ON build-cpp-with-coverage"
       - run: |
           zip -r code.zip . -x "./.docker/*" -x "./cmake_build/thirdparty/**" -x ".git/**"
       - name: Archive code
