@@ -94,72 +94,59 @@ pipeline {
                     }
                 }
 
-
                 stage('Build Milvus Images on arm') {
-                    agent {
-                        label 'arm'
-                    }
                     steps {
-                        script {
-                            sh """
-                            cp -r /tmp/krte/cache/.docker .
-                            PLATFORM_ARCH="arm64" build/builder.sh /bin/bash -c "make install"
-                            """
-
-                            dir ("imageTag"){
-                                try{
-                                    unstash 'imageTag'
-                                    imageTag=sh(returnStdout: true, script: 'cat imageTag.txt | tr -d \'\n\r\'')
-                                }catch(e){
-                                    print "No Image Tag info remained ,please rerun build to build new image."
-                                    exit 1
-                                }
-                            }
-
-                            withCredentials([usernamePassword(credentialsId: "${env.DOCKER_CREDENTIALS_ID}", usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]){
-                                sh "docker login -u '${DOCKER_USERNAME}' -p '${DOCKER_PASSWORD}'"
-                                sh """
-                                    export MILVUS_IMAGE_REPO="${env.TARGET_REPO}/milvus"
-                                    export MILVUS_HARBOR_IMAGE_REPO="${env.HARBOR_REPO}/milvus/milvus"
-                                    export MILVUS_IMAGE_TAG="${imageTag}-arm64"
-                                    export DOCKER_BUILDKIT=1
-                                    BUILD_ARGS="--build-arg TARGETARCH=arm64" build/build_image.sh
-                                    docker push \${MILVUS_IMAGE_REPO}:\${MILVUS_IMAGE_TAG}
-                                    docker logout
-                                """
-                            }
-
-
-                            withCredentials([usernamePassword(credentialsId: "${env.CI_DOCKER_CREDENTIAL_ID}", usernameVariable: 'CI_REGISTRY_USERNAME', passwordVariable: 'CI_REGISTRY_PASSWORD')]){
-                                sh "docker login ${env.HARBOR_REPO} -u '${CI_REGISTRY_USERNAME}' -p '${CI_REGISTRY_PASSWORD}'"
-                                sh """
-                                    export MILVUS_IMAGE_REPO="${env.TARGET_REPO}/milvus"
-                                    export MILVUS_HARBOR_IMAGE_REPO="${env.HARBOR_REPO}/milvus/milvus"
-                                    export MILVUS_IMAGE_TAG="${imageTag}-arm64"
-                                    docker tag \${MILVUS_IMAGE_REPO}:\${MILVUS_IMAGE_TAG} \${MILVUS_HARBOR_IMAGE_REPO}:\${MILVUS_IMAGE_TAG}
-                                    docker push \${MILVUS_HARBOR_IMAGE_REPO}:\${MILVUS_IMAGE_TAG}
-                                    docker logout
-                                    docker rmi \${MILVUS_IMAGE_REPO}:\${MILVUS_IMAGE_TAG} -f
-                                    docker rmi \${MILVUS_HARBOR_IMAGE_REPO}:\${MILVUS_IMAGE_TAG} -f
-                                """
-                            }
-                        }
-                    }
-                    post {
-                        always {
+                        container('main') {
                             script {
-                                // if (currentBuild.currentResult == "SUCCESS") {
-                                //     sh "cp -r .docker /tmp/krte/cache/"
-                                // }
+
+                                sh './build/set_docker_mirror.sh'
                                 sh """
-                                pwd
-                                sudo rm -rf .env .docker
-                                sudo rm -rf *
+                                # disable dirty tag
+                                sed -i. 's/--dirty="-dev"//g' Makefile
+                                export IS_NETWORK_MODE_HOST="true"
+                                build/builder.sh /bin/bash -c \"make install\"
                                 """
+
+                                dir ("imageTag"){
+                                    try{
+                                        unstash 'imageTag'
+                                        imageTag=sh(returnStdout: true, script: 'cat imageTag.txt | tr -d \'\n\r\'')
+                                    }catch(e){
+                                        print "No Image Tag info remained ,please rerun build to build new image."
+                                        exit 1
+                                    }
+                                }
+
+                                withCredentials([usernamePassword(credentialsId: "${env.DOCKER_CREDENTIALS_ID}", usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]){
+                                    sh "docker login -u '${DOCKER_USERNAME}' -p '${DOCKER_PASSWORD}'"
+                                    sh """
+                                        export MILVUS_IMAGE_REPO="${env.TARGET_REPO}/milvus"
+                                        export MILVUS_HARBOR_IMAGE_REPO="${env.HARBOR_REPO}/milvus/milvus"
+                                        export MILVUS_IMAGE_TAG="${imageTag}-arm64"
+                                        export DOCKER_BUILDKIT=1
+                                        build/build_image.sh
+                                        docker push \${MILVUS_IMAGE_REPO}:\${MILVUS_IMAGE_TAG}
+                                        docker logout
+                                    """
+                                }
+
+
+                                withCredentials([usernamePassword(credentialsId: "${env.CI_DOCKER_CREDENTIAL_ID}", usernameVariable: 'CI_REGISTRY_USERNAME', passwordVariable: 'CI_REGISTRY_PASSWORD')]){
+                                    sh "docker login ${env.HARBOR_REPO} -u '${CI_REGISTRY_USERNAME}' -p '${CI_REGISTRY_PASSWORD}'"
+                                    sh """
+                                        export MILVUS_IMAGE_REPO="${env.TARGET_REPO}/milvus"
+                                        export MILVUS_HARBOR_IMAGE_REPO="${env.HARBOR_REPO}/milvus/milvus"
+                                        export MILVUS_IMAGE_TAG="${imageTag}-arm64"
+                                        docker tag \${MILVUS_IMAGE_REPO}:\${MILVUS_IMAGE_TAG} \${MILVUS_HARBOR_IMAGE_REPO}:\${MILVUS_IMAGE_TAG}
+                                        docker push \${MILVUS_HARBOR_IMAGE_REPO}:\${MILVUS_IMAGE_TAG}
+                                        docker logout
+                                    """
+                                }
                             }
                         }
                     }
                 }
+          
 
             }
         }
