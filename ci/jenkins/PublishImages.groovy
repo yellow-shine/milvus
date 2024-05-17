@@ -95,6 +95,16 @@ pipeline {
                 }
 
                 stage('Build Milvus Images on arm') {
+                    agent {
+                        kubernetes {
+                            defaultContainer 'main'
+                            yamlFile "ci/jenkins/pod/rte-arm.yaml"
+                            customWorkspace '/home/jenkins/agent/workspace'
+                            // We allow this pod to remain active for a while, later jobs can
+                            // reuse cache in previous created nodes.
+                            // idleMinutes 120
+                        }
+                    }
                     steps {
                         container('main') {
                             script {
