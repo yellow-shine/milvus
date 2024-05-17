@@ -17,10 +17,8 @@ pipeline {
     }
     agent {
             kubernetes {
-                cloud '4am'
-                inheritFrom 'milvus-e2e-4am'
                 defaultContainer 'main'
-                yamlFile 'ci/jenkins/pod/rte-build.yaml'
+                yamlFile 'ci/jenkins/pod/rte.yaml'
                 customWorkspace '/home/jenkins/agent/workspace'
             }
     }
@@ -82,7 +80,7 @@ pipeline {
                 axes {
                     axis {
                         name 'MILVUS_SERVER_TYPE'
-                        values 'standalone', 'distributed', 'standalone-kafka', 'standalone-one-pod'
+                        values 'standalone'
                     }
                     axis {
                         name 'MILVUS_CLIENT'
@@ -99,13 +97,8 @@ pipeline {
                                     script {
                                         sh 'printenv'
                                         def clusterEnabled = "false"
-                                        def valuesFile = "pr-4am.yaml"
-                                        if ("${MILVUS_SERVER_TYPE}".contains('distributed')) {
-                                            clusterEnabled = "true"
-                                        }
-                                        if ("${MILVUS_SERVER_TYPE}".contains("kafka")) {
-                                            valuesFile = "pr_kafka.yaml"
-                                        }
+                                        def valuesFile = "pr-arm.yaml"
+
                                         if ("${MILVUS_SERVER_TYPE}" == "standalone-one-pod") {
                                             valuesFile = "nightly-one-pod.yaml"
                                         }
@@ -206,8 +199,6 @@ pipeline {
                         }
                         agent {
                                 kubernetes {
-                                    cloud '4am'
-                                    inheritFrom 'default'
                                     defaultContainer 'main'
                                     yamlFile 'ci/jenkins/pod/e2e.yaml'
                                     customWorkspace '/home/jenkins/agent/workspace'
