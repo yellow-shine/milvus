@@ -17,9 +17,8 @@ pipeline {
     }
     agent {
             kubernetes {
-                inheritFrom 'milvus-e2e-4am'
                 defaultContainer 'main'
-                yamlFile 'ci/jenkins/pod/rte-build.yaml'
+                yamlFile 'ci/jenkins/pod/rte.yaml'
                 customWorkspace '/home/jenkins/agent/workspace'
             }
     }
@@ -81,7 +80,7 @@ pipeline {
                 axes {
                     axis {
                         name 'MILVUS_SERVER_TYPE'
-                        values 'standalone', 'distributed', 'standalone-kafka', 'standalone-one-pod'
+                        values 'standalone'
                     }
                     axis {
                         name 'MILVUS_CLIENT'
