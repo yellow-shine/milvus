@@ -18,7 +18,7 @@ pipeline {
     agent {
             kubernetes {
                 defaultContainer 'main'
-                yamlFile 'ci/jenkins/pod/rte.yaml'
+                yamlFile 'ci/jenkins/pod/rte-arm.yaml'
                 customWorkspace '/home/jenkins/agent/workspace'
             }
     }
