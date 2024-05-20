@@ -5,6 +5,10 @@ metadata:
     app: milvus-e2e
   namespace: milvus-ci
 spec:
+  tolerations:
+  - key: "node-role.kubernetes.io/arm"
+    operator: "Exists"
+    effect: "NoSchedule"
   nodeSelector:
     "kubernetes.io/arch": "arm64"
   enableServiceLinks: false
