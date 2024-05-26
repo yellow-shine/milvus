@@ -1,0 +1,78 @@
+pipeline {
+    agent {
+        kubernetes {
+            // cloud 'kubernetes'
+            // label 'jenkins-slave'
+            // defaultContainer 'jnlp'
+            // yamlFile 'ci/jenkins/pod/meta-builder.yaml'
+            yaml '''
+        spec:
+          securityContext:
+            runAsUser: 1000 # default UID of jenkins user in agent image
+          containers:
+          - name: kubectl
+            image: bitnami/kubectl:1.27.14
+            command:
+            - cat
+            tty: true
+        '''
+        }
+    }
+    stages {
+        stage('Stage 1') {
+            steps {
+                echo 'Hello world!'
+            }
+        }
+        stage('sleep') {
+            steps {
+                script {
+                    sleep 1
+                }
+            }
+        }
+        stage('list pod') {
+            steps {
+                container('kubectl') {
+                    script {
+                      // sh 'kubectl get pod'
+                          // "ls -lah".execute().text.eachLine { line ->
+                          //     echo line
+                          // }
+
+                       def ret = sh ( script: """
+cat << EOF | kubectl apply -f -
+apiVersion: tekton.dev/v1beta1
+kind: TaskRun
+metadata:
+  name: hello-task-run
+  namespace: milvus-ci
+spec:
+  taskRef:
+    name: hello
+EOF
+""", returnStdout: true)
+            def name = ret.split("/")[1].split(' ')[0]
+                        // def ret = sh(script: 'kubectl ', returnStdout: true)
+                        
+                        sh """
+                        kubectl logs ${name}-pod -f -n milvus-ci
+                            """
+                        
+                        sh """
+                        kubectl describe taskrun ${name} -n milvus-ci
+                            """
+
+                        // "kubectl get pod".execute().text.eachLine { line ->
+                        //     echo line
+                        // }
+                        // "tkn task start hello".execute().text.eachLine { line ->
+                        //     echo line
+                        // }
+                        // sh 'echo hello'
+                    }
+                }
+            }
+        }
+    }
+}
