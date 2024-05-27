@@ -1,0 +1,100 @@
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: milvus-clone-build-push
+spec:
+  description: |
+    This pipeline clones a git repo, builds a Docker image with Kaniko and
+    pushes it to a registry    
+  params:
+  - name: repo-url
+    type: string
+    default: https://github.com/milvus-io/milvus.git
+  - name: revision
+    type: string
+    default: "master"
+  - name: registryToPush
+    type: string
+    default: "harbor.milvus.io"
+  - name: computing_engine
+    default: "cpu"
+  - name: arch
+    description: the architectures of the image, it would be amd64 or arm64
+    default: "amd64"
+  - name: milvus_env_os_name
+    description: the os of milvus-env to use
+    default: "ubuntu20.04"
+  - name: milvus_env_version
+    default: ""
+    description: the version of milvus-env to use
+  - name: base_image_os_name
+    description: the architectures of the image, it would be amd64 or arm64
+    default: "ubuntu20.04"
+  workspaces:
+  - name: shared-data
+  tasks:
+  - name: fetch-source
+    taskRef:
+      name: git-clone
+    workspaces:
+    - name: output
+      workspace: shared-data
+    params:
+    - name: url
+      value: $(params.repo-url)
+    - name: revision
+      value: $(params.revision)
+  - name: generate-image-name
+    taskRef:
+      name: milvus-image-name
+    params:
+    - name: registryToPush
+      value: $(params.registryToPush)
+  - name: generate-image-tag
+    taskRef:
+      name: image-tag
+    params:
+    - name: branch
+      value: $(params.revision)
+    - name: hash
+      value: $(tasks.fetch-source.results.commit)
+    - name: arch
+      value: $(params.arch)
+    - name: computing_engine
+      value: $(params.computing_engine)
+  - name: milvus-env
+    runAfter: ["fetch-source"]
+    taskRef:
+      name: milvus-env 
+    workspaces:
+    - name: source
+      workspace: shared-data
+    params:
+    - name: os_name
+      value: $(params.milvus_env_os_name)
+    - name: version
+      value: $(params.milvus_env_version)
+    - name: computing_engine
+      value: $(params.computing_engine)
+  - name: choose-dockerfile
+    taskRef:
+      name: choose-dockerfile
+    params:
+    - name: os_name
+      value: $(params.milvus_env_os_name)
+    - name: computing_engine
+      value: $(params.computing_engine)
+  - name: build-push
+    runAfter: ["fetch-source","milvus-env", "choose-dockerfile"]
+    taskRef:
+      name: milvus-docker-build
+    workspaces:
+    - name: source
+      workspace: shared-data
+    params:
+    - name: milvus-env
+      value: "milvusdb/milvus-env:$(tasks.milvus-env.results.tag)"
+    - name: image_name
+      value: "$(tasks.generate-image-name.results.name):$(tasks.generate-image-tag.results.tag)"
+    - name: dockerfile
+      value: "$(tasks.choose-dockerfile.results.dockerfile)"

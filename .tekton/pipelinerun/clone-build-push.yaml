@@ -1,0 +1,27 @@
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  generateName: milvus-clone-build-push-run-
+spec:
+  pipelineRef:
+    name: milvus-clone-build-push
+  taskRunTemplate:
+    serviceAccountName:  robot-tekton
+    podTemplate:
+      # hostNetwork: true
+      securityContext:
+        fsGroup: 65532
+  workspaces:
+  - name: shared-data
+    volumeClaimTemplate:
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 100Gi
+  params:
+  - name: revision
+    value: master
+  - name: arch
+    value: amd64
