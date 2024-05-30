@@ -68,7 +68,7 @@ def ret = tekton( ["revision": 'main', "arch":'amd64'])
     }
 }
 
-def tekton(ars) {
+def tekton(Map ars) {
 
   def input = """
 cat << EOF | kubectl create -f -
