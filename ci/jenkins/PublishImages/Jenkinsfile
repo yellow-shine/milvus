@@ -71,7 +71,7 @@ pipeline {
 def tekton() {
 
   def input = """
-cat << EOF | kubectl apply -f -
+cat << EOF | kubectl create -f -
 apiVersion: tekton.dev/v1
 kind: PipelineRun
 metadata:
