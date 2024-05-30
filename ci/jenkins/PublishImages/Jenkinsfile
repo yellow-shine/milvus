@@ -46,7 +46,7 @@ def ret = tekton( ["revision": 'master', "arch":'amd64'])
             def name = ret.split("/")[1].split(' ')[0]
                         // def ret = sh(script: 'kubectl ', returnStdout: true)
 
-                        def status= sh script: "kubectl get pipelineRun milvus-build-p9p2l -n milvus-ci | tail -1 | awk '{print \$3}'", returnStdout: true)
+                        def status= sh script: "kubectl get pipelineRun ${name} -n milvus-ci | tail -1 | awk '{print \$3}'", returnStdout: true)
                         while (status == "Running") {
                             sleep 3
                             sh """
