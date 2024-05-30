@@ -1,4 +1,7 @@
 pipeline {
+    options {
+      skipDefaultCheckout true
+     }
     agent {
         kubernetes {
             // cloud 'kubernetes'
@@ -21,6 +24,7 @@ pipeline {
     stages {
         stage('Stage 1') {
             steps {
+        echo "branch: $env.BRANCH_NAME"
                 echo 'Hello world!'
             }
         }
