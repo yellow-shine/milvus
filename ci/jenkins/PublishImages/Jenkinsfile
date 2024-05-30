@@ -41,7 +41,7 @@ pipeline {
 
                           // }
             
-            def ret = tekton()
+def ret = tekton( ["revision": 'main', "arch":'amd64'])
 
             def name = ret.split("/")[1].split(' ')[0]
                         // def ret = sh(script: 'kubectl ', returnStdout: true)
@@ -68,7 +68,7 @@ pipeline {
     }
 }
 
-def tekton() {
+def tekton(ars) {
 
   def input = """
 cat << EOF | kubectl create -f -
@@ -97,9 +97,9 @@ spec:
             storage: 100Gi
   params:
   - name: revision
-    value: master
+    value: ${args.revision}
   - name: arch
-    value: amd64
+    value: ${args.arch}
 EOF
 """
   
