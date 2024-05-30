@@ -71,18 +71,16 @@ pipeline {
 def tekton() {
 
   def input = """
-
-    cat << EOF | kubectl apply -f -
-    apiVersion: tekton.dev/v1beta1
-    kind: TaskRun
-    metadata:
-      name: hello-task-run
-      namespace: milvus-ci
-    spec:
-      taskRef:
-        name: hello
-    EOF
-
+cat << EOF | kubectl apply -f -
+apiVersion: tekton.dev/v1beta1
+kind: TaskRun
+metadata:
+  name: hello-task-run
+  namespace: milvus-ci
+spec:
+  taskRef:
+    name: hello
+EOF
 """
   
   println input
