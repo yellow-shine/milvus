@@ -85,7 +85,8 @@ def tekton() {
 
 """
   
-  sh "echo $input"
+  println input
+  // sh "echo $input"
 
   def ret = sh ( script: input, returnStdout: true)
 
