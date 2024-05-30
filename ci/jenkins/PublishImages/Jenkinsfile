@@ -1,7 +1,7 @@
 pipeline {
     options {
       skipDefaultCheckout true
-     }
+    }
     agent {
         kubernetes {
             yaml '''
@@ -40,27 +40,30 @@ pipeline {
                           //     echo line
 
                           // }
-            
+
 def ret = tekton( ["revision": 'master', "arch":'amd64'])
 
             def name = ret.split("/")[1].split(' ')[0]
                         // def ret = sh(script: 'kubectl ', returnStdout: true)
-                        
-                        sh """
-                        kubectl logs -n milvus-ci -l tekton.dev/pipelineRun=${name} -f  --max-log-requests=10  --ignore-errors=true
-                            """
-                        
+
+                        def status= sh script: "kubectl get pipelineRun milvus-build-p9p2l -n milvus-ci | tail -1 | awk '{print \$3}'", returnStdout: true)
+                        while (status == "Running") {
+                            sleep 3
+                            sh """
+                            kubectl logs -n milvus-ci -l tekton.dev/pipelineRun=${name} -f  --max-log-requests=10  --ignore-errors=true
+                                """
+                        }
                         sh """
                         kubectl describe tekton.dev/pipelineRun ${name} -n milvus-ci
                             """
 
-                        // "kubectl get pod".execute().text.eachLine { line ->
-                        //     echo line
-                        // }
-                        // "tkn task start hello".execute().text.eachLine { line ->
-                        //     echo line
-                        // }
-                        // sh 'echo hello'
+                    // "kubectl get pod".execute().text.eachLine { line ->
+                    //     echo line
+                    // }
+                    // "tkn task start hello".execute().text.eachLine { line ->
+                    //     echo line
+                    // }
+                    // sh 'echo hello'
                     }
                 }
             }
@@ -102,7 +105,7 @@ spec:
     value: ${args.arch}
 EOF
 """
-  
+
   println input
   // sh "echo $input"
 
