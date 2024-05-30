@@ -70,7 +70,8 @@ pipeline {
 
 def tekton() {
 
-  def ret = sh ( script: """
+  def input = """
+
     cat << EOF | kubectl apply -f -
     apiVersion: tekton.dev/v1beta1
     kind: TaskRun
@@ -81,7 +82,12 @@ def tekton() {
       taskRef:
         name: hello
     EOF
-    """, returnStdout: true)
+
+"""
+  
+  sh "echo $input"
+
+  def ret = sh ( script: input, returnStdout: true)
 
     return ret
 
