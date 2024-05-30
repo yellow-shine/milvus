@@ -41,7 +41,7 @@ pipeline {
 
                           // }
             
-def ret = tekton( ["revision": 'main', "arch":'amd64'])
+def ret = tekton( ["revision": 'master', "arch":'amd64'])
 
             def name = ret.split("/")[1].split(' ')[0]
                         // def ret = sh(script: 'kubectl ', returnStdout: true)
