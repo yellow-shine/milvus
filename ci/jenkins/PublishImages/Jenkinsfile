@@ -72,14 +72,33 @@ def tekton() {
 
   def input = """
 cat << EOF | kubectl apply -f -
-apiVersion: tekton.dev/v1beta1
-kind: TaskRun
+apiVersion: tekton.dev/v1
+kind: PipelineRun
 metadata:
-  name: hello-task-run
-  namespace: milvus-ci
+  generateName: milbuild-
 spec:
-  taskRef:
-    name: hello
+  pipelineRef:
+    name: milvus-clone-build-push
+  taskRunTemplate:
+    serviceAccountName:  robot-tekton
+    podTemplate:
+      # hostNetwork: true
+      securityContext:
+        fsGroup: 65532
+  workspaces:
+  - name: shared-data
+    volumeClaimTemplate:
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 100Gi
+  params:
+  - name: revision
+    value: master
+  - name: arch
+    value: amd64
 EOF
 """
   
