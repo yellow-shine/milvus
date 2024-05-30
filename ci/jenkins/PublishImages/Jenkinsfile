@@ -4,10 +4,6 @@ pipeline {
      }
     agent {
         kubernetes {
-            // cloud 'kubernetes'
-            // label 'jenkins-slave'
-            // defaultContainer 'jnlp'
-            // yamlFile 'ci/jenkins/pod/meta-builder.yaml'
             yaml '''
         spec:
           securityContext:
@@ -24,7 +20,7 @@ pipeline {
     stages {
         stage('Stage 1') {
             steps {
-        echo "branch: $env.BRANCH_NAME"
+                echo "branch: $env.BRANCH_NAME"
                 echo 'Hello world!'
             }
         }
