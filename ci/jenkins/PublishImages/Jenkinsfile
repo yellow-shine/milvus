@@ -49,7 +49,7 @@ def ret = tekton( ["revision": 'master', "arch":'amd64'])
                         def status= sh script: "kubectl get pipelineRun ${name} -n milvus-ci | tail -1 | awk '{print \$3}'", returnStdout: true
                             sleep 3
                         echo "status: ${status}"
-                        while (status == "Running") {
+                        while ("Running".equalsIgnoreCase(status)) {
                             sleep 3
                             sh """
                             kubectl logs -n milvus-ci -l tekton.dev/pipelineRun=${name} -f  --max-log-requests=10  --ignore-errors=true
