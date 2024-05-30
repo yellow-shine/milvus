@@ -38,20 +38,11 @@ pipeline {
                       // sh 'kubectl get pod'
                           // "ls -lah".execute().text.eachLine { line ->
                           //     echo line
-                          // }
 
-                       def ret = sh ( script: """
-cat << EOF | kubectl apply -f -
-apiVersion: tekton.dev/v1beta1
-kind: TaskRun
-metadata:
-  name: hello-task-run
-  namespace: milvus-ci
-spec:
-  taskRef:
-    name: hello
-EOF
-""", returnStdout: true)
+                          // }
+            
+            def ret = tekton()
+
             def name = ret.split("/")[1].split(' ')[0]
                         // def ret = sh(script: 'kubectl ', returnStdout: true)
                         
@@ -75,4 +66,23 @@ EOF
             }
         }
     }
+}
+
+def tekton() string {
+
+  def ret = sh ( script: """
+    cat << EOF | kubectl apply -f -
+    apiVersion: tekton.dev/v1beta1
+    kind: TaskRun
+    metadata:
+      name: hello-task-run
+      namespace: milvus-ci
+    spec:
+      taskRef:
+        name: hello
+    EOF
+    """, returnStdout: true)
+
+    return ret
+
 }
