@@ -47,8 +47,7 @@ def ret = tekton( ["revision": 'master', "arch":'amd64'])
                         // def ret = sh(script: 'kubectl ', returnStdout: true)
                         
                         sh """
-                        sleep 3
-                        kubectl logs -n milvus-ci -l tekton.dev/pipelineRun=${name} -f  --max-log-requests=10
+                        kubectl logs -n milvus-ci -l tekton.dev/pipelineRun=${name} -f  --max-log-requests=10  --ignore-errors=true
                             """
                         
                         sh """
