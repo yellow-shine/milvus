@@ -75,7 +75,7 @@ cat << EOF | kubectl apply -f -
 apiVersion: tekton.dev/v1
 kind: PipelineRun
 metadata:
-  generateName: milbuild-
+  generateName: milvus-build-
 spec:
   pipelineRef:
     name: milvus-clone-build-push
