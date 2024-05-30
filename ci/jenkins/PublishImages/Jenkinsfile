@@ -68,7 +68,7 @@ pipeline {
     }
 }
 
-def tekton() string {
+def tekton() {
 
   def ret = sh ( script: """
     cat << EOF | kubectl apply -f -
