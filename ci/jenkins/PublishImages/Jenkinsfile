@@ -41,6 +41,7 @@ pipeline {
 
                           // }
 
+
                         def ret = tekton 'revision': "$env.BRANCH_NAME", 'arch':'amd64'
 
                         name = ret.split('/')[1].split(' ')[0]
