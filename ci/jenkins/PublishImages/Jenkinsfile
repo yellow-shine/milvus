@@ -1,6 +1,8 @@
+def name = ''
+
 pipeline {
     options {
-      skipDefaultCheckout true
+        skipDefaultCheckout true
     }
     agent {
         kubernetes {
@@ -32,7 +34,6 @@ pipeline {
         stage('build') {
             steps {
                 container('kubectl') {
-                    def name = ""
                     script {
                       // sh 'kubectl get pod'
                           // "ls -lah".execute().text.eachLine { line ->
@@ -40,9 +41,9 @@ pipeline {
 
                           // }
 
-                        def ret = tekton( ["revision": 'master', "arch":'amd64'])
+                        def ret = tekton(['revision': 'master', 'arch':'amd64'])
 
-                        name = ret.split("/")[1].split(' ')[0]
+                        name = ret.split('/')[1].split(' ')[0]
                         // def ret = sh(script: 'kubectl ', returnStdout: true)
 
                         // def status= sh script: "kubectl get pipelineRun ${name} -n milvus-ci | tail -1 | awk '{print \$3}'", returnStdout: true
@@ -71,10 +72,9 @@ pipeline {
                     // sh 'echo hello'
                     }
                 }
-                
+
                 container('tkn') {
                     script {
-
                         sh """
                             tkn pipelinerun logs ${name} -f -n milvus-ci
                         """
@@ -82,10 +82,10 @@ pipeline {
                         sh """
                             tkn pipelinerun describe ${name} -f -n milvus-ci
                         """
-                        // sh 'tkn task start hello'
-                        // "tkn task start hello".execute().text.eachLine { line ->
-                        //     echo line
-                        // }
+                    // sh 'tkn task start hello'
+                    // "tkn task start hello".execute().text.eachLine { line ->
+                    //     echo line
+                    // }
                     }
                 }
             }
@@ -94,8 +94,7 @@ pipeline {
 }
 
 def tekton(Map args) {
-
-  def input = """
+    def input = """
 cat << EOF | kubectl create -f -
 apiVersion: tekton.dev/v1
 kind: PipelineRun
@@ -128,11 +127,10 @@ spec:
 EOF
 """
 
-  println input
+    println input
   // sh "echo $input"
 
-  def ret = sh ( script: input, returnStdout: true)
+    def ret = sh( script: input, returnStdout: true)
 
     return ret
-
 }
