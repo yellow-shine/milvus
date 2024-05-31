@@ -72,7 +72,9 @@ spec:
       # mount source code into it
       # mount conan cache into it
       # run make command
-      docker run --net=host -v /root/.conan:/root/.conan -v $(pwd):/root/milvus  -w /root/milvus \
+      docker run \ 
+        --cpu-shares=512 --cpus="8.0" --memory="16g" --memory-swap="32g" \
+        --net=host -v /root/.conan:/root/.conan -v $(pwd):/root/milvus  -w /root/milvus \
         $(params.milvus-env) sh -c "make clean && make install"
 
     volumeMounts:
