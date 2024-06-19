@@ -75,6 +75,9 @@ spec:
       securityContext:
         fsGroup: 65532
   workspaces:
+  - name: cache-conan
+    persistentVolumeClaim:
+        claimName: conan-os-ubuntu20.04-arch-amd64-compiler-gcc9-buildtype-release
   - name: shared-data
     volumeClaimTemplate:
       spec:
