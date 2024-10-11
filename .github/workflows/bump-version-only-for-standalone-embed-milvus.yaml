@@ -7,10 +7,6 @@ on:
         description: "the milvus image tag"
         required: true
         type: string
-      oldImageTag:
-        description: "the milvus old image tag"
-        required: true
-        type: string
 
 jobs:
   update-knowhere-commits:
