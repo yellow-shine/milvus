@@ -502,6 +502,7 @@ pull_request_rules:
         add:
           - kind/feature
 
+
   - name: Label enhancement PRs
     conditions:
       # branch condition: in this pull request, the changes are based on any branch referenced by BRANCHES
