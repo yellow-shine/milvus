@@ -600,6 +600,7 @@ pull_request_rules:
         add:
           - kind/feature
 
+
   - name: Label enhancement PRs
     conditions:
       - or: *BRANCHES
